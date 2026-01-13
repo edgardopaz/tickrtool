@@ -77,6 +77,20 @@ def search(name: Annotated[str, typer.Argument(help="Enter the company name.")])
     """
     SEARCH for ticker symbols by company name.
     """
+
+    common_indices = {
+        "s&p 500": ("SPY", "VOO", "IVV"),
+        "dow jones": ("DIA",),
+        "nasdaq": ("QQQ",),
+        "russell 2000": ("IWM",)
+    }
+
+    search_name = name.lower()
+    for index_name, tickers in common_indices.items():
+        if index_name in search_name:
+            console.print(f"[yellow] '{name.upper()}' is an index. Try these ETFs instead: [/yellow]" )
+            for ticker in tickers:
+                console.print(f" - [cyan]{ticker}[/cyan]")
     try:
         with console.status(f"[bold green]Searching for '{name}'...", spinner="dots"):
             api_url = f"https://www.alphavantage.co/query?function=SYMBOL_SEARCH&keywords={name}&apikey={API_KEY}"
